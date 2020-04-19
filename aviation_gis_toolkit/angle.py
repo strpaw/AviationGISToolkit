@@ -1,6 +1,6 @@
 import math
-from aviation_gis_toolkit.const import *
-from aviation_gis_toolkit.base_tools import BasicTools
+from .const import *
+from .base_tools import BasicTools
 
 
 # ANGLE DMS string formats
