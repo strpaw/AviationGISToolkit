@@ -32,6 +32,22 @@ class Distance:
         self.err_msg = ''
         self.check_distance()
 
+    def __str__(self):
+        if self.is_valid:
+            return '{src_value} {src_uom}'.format(src_value=self.src_dist, src_uom=self.src_uom)
+
+    def __eq__(self, other):
+        self_m = self.convert_dist_to_m()
+        other_m = other.convert_dist_to_m()
+        if self_m == other_m:
+            return True
+
+    def __lt__(self, other):
+        self_m = self.convert_dist_to_m()
+        other_m = other.convert_dist_to_m()
+        if self_m < other_m:
+            return True
+
     @staticmethod
     def get_normalized_src_value(src_value):
         """ Normalizes source (input)  value for further processing.

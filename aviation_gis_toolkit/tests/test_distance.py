@@ -45,7 +45,6 @@ class DistanceTests(unittest.TestCase):
         self.assertEqual('Distance error. Distance not be less than 0.', err_msg)
         self.assertEqual(None, num)
 
-
     def test_is_uom(self):
 
         is_uom, err_msg = Distance.is_uom(UOM_M)
@@ -146,3 +145,73 @@ class DistanceTests(unittest.TestCase):
         self.assertAlmostEqual(1.9986453563714903, dist.convert_dist_to_uom(UOM_NM))
         self.assertEqual(12144.0, dist.convert_dist_to_uom(UOM_FT))
         self.assertAlmostEqual(2.3, dist.convert_dist_to_uom(UOM_SM))
+
+    def test_distance_string_representation(self):
+        dist = Distance('899,55')
+        self.assertEqual('899,55 m', str(dist))
+
+        dist = Distance('899.55', UOM_KM)
+        self.assertEqual('899.55 km', str(dist))
+
+        dist = Distance('4721', UOM_FT)
+        self.assertEqual('4721 ft', str(dist))
+
+    def test_distances_are_equal(self):
+        # In terms of distance as length
+        d1 = Distance('785,99')
+        d2 = Distance('785.99')
+        self.assertTrue(d1 == d2)
+
+        d1 = Distance('0.12322', UOM_KM)
+        d2 = Distance('123.22')
+        self.assertTrue(d1 == d2)
+
+        d1 = Distance('43.25', UOM_NM)
+        d2 = Distance('80.099', UOM_KM)
+        self.assertTrue(d1 == d2)
+
+    def test_distances_are_not_equal(self):
+        # In terms of distance as length
+        d1 = Distance('785,99')
+        d2 = Distance('433.99')
+        self.assertFalse(d1 == d2)
+
+        d1 = Distance('0.12321', UOM_KM)
+        d2 = Distance('123.22')
+        self.assertFalse(d1 == d2)
+
+    def test_distance_first_is_less_than_second(self):
+        # In terms of distance as length
+        d1 = Distance('785.22')
+        d2 = Distance('785,23')
+        self.assertTrue(d1 < d2)
+
+        d1 = Distance('1.455', UOM_KM)
+        d2 = Distance('1456')
+        self.assertTrue(d1 < d2)
+
+        d1 = Distance('16.3', UOM_NM)
+        d2 = Distance('22.1', UOM_NM)
+        self.assertTrue(d1 < d2)
+
+        d1 = Distance('2755', UOM_FT)
+        d2 = Distance('839.7241')
+        self.assertTrue(d1 < d2)
+
+    def test_distance_first_is_not_less_than_second(self):
+        # In terms of distance as length
+        d2 = Distance('785.22')
+        d1 = Distance('785,23')
+        self.assertFalse(d1 < d2)
+
+        d2 = Distance('1.455', UOM_KM)
+        d1 = Distance('1456')
+        self.assertFalse(d1 < d2)
+
+        d2 = Distance('16.3', UOM_NM)
+        d1 = Distance('22.1', UOM_NM)
+        self.assertFalse(d1 < d2)
+
+        d2 = Distance('2755', UOM_FT)
+        d1 = Distance('839.7241')
+        self.assertFalse(d1 < d2)
