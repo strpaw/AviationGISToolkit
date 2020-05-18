@@ -2,11 +2,12 @@
 bearing.py
 bearing module provides functionality to deal with bearings: conversion, validation
 """
+from aviation_gis_toolkit.base_tools import BasicTools
 import re
 import math
 
 # Bearing regular expressions
-BRNG_REGEX = {
+BRNG_REGEXS = {
     'DMS_SEP': re.compile(r'''^
                               (?P<deg>\d{1,3})  # Degrees
                                \W  # Separator: space, hyphen, degree sign
@@ -28,8 +29,27 @@ BRNG_REGEX = {
 BRNG_STRING_FORMAT = '{d:03d} {m:02d} {s:0{sec_length}.{sec_prec}f}'
 
 
-class Bearing:
-    """ Class covers actions related to bearing: validation, conversion, reduction to azimuth."""
+class Bearing(BasicTools):
+    """ Class covers actions related to bearing: validation, conversion, reduction to azimuth.
+        Attributes:
+    -----------
+    src_brng : str or float or int
+        Keeps source value of bearing, note that this value can be with comma decimal separator not dot decimal
+        separator, example: 109,25 109.25.
+    brng_dd: float
+        Keeps float value of bearing, DD format of src_brng.
+    is_valid: bool
+        True if src_brng value is valid bearing, False otherwise
+    err_msg: str
+        Keeps error message in case src_brng value is not supported bearing format
+
+    """
+    def __init__(self, src_brng):
+        BasicTools.__init__(self)
+        self.src_brng = src_brng
+        self.brng_dd = None
+        self.is_valid = None
+        self.err_msg = ''
 
     @staticmethod
     def _dd_to_dms_parts(ang_dd, prec=3):
@@ -65,3 +85,51 @@ class Bearing:
 
         dms = BRNG_STRING_FORMAT.format(d=d, m=m, s=s, sec_length=sec_length, sec_prec=prec)
         return dms
+
+    @staticmethod
+    def _get_dms_parts(brng):
+        """ Gets degrees, minutes, seconds from bearing in DMS format.
+        :param brng: str, bearing in DMS format (separated or compacted).
+        :return: tuple:
+        """
+        for brng_regex in BRNG_REGEXS.values():
+            mo = brng_regex.match(brng)  # Check if there is matching object for given pattern
+            if mo:  # If it is - get parts of bearing in DMS format
+                d = int(mo.group('deg'))
+                m = int(mo.group('min'))
+                s = float(mo.group('sec'))
+                return d, m, s
+
+    @staticmethod
+    def _dms_parts_to_dd(parts):
+        """ Converts dms parts to float value of DMS format
+        :param parts: tuple
+        :return: float: DMS bearing in DD format
+        """
+        d, m, s = parts
+        if m < 60 and s < 60:
+            return d + m / 60 + s / 3600
+
+    @staticmethod
+    def _bearing_dms_to_dd(brng):
+        """ Converts bearing from DMS format to DD format.
+        :param brng: str, normalized source bearing value
+        :return: float: bearing in DD format, None if it is wrong source bearing value
+        """
+        parts = Bearing._get_dms_parts(brng)
+        return Bearing._dms_parts_to_dd(parts)
+
+    def bearing_to_dd(self):
+        """ Converts bearing from source value to DD format. """
+        norm_brng = self.get_normalized_src_value(self.src_brng)
+        # Check DMS formats
+        dd = self._bearing_dms_to_dd(norm_brng)
+        # Check if brng is withing range
+        if dd is not None:
+            if self.is_within_range(dd, 0, 360):
+                self.brng_dd = dd
+                self.is_valid = True
+                self.err_msg = ''
+            else:
+                self.is_valid = False
+                self.err_msg = 'Value {} is not supported bearing format'.format(self.src_brng)
