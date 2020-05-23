@@ -1,5 +1,4 @@
 """
-const.py
 const module provides common constants as unit of measure, angle types used in aviation_gis_toolkit package.
 """
 
@@ -15,9 +14,8 @@ UOM_LIST = [UOM_M, UOM_KM, UOM_NM, UOM_FT, UOM_SM]
 
 # ------------------- Angle types ------------------- #
 
-# Angle types
-AT_LON = 'AT_LON'
-AT_LAT = 'AT_LAT'
+AT_LON = 'AT_LON'  # Longitude
+AT_LAT = 'AT_LAT'  # Latitude
 
 # ------------------- Angle formats ------------------- #
 
@@ -40,4 +38,3 @@ AF_DMSH_SEP = 'AF_DMSH_SEP'  # e.g.: 55 22 43.47N
 AF_HDMS_SEP = 'AF_HDMS_SEP'
 AF_DMSH_SEP_SYMBOLS = 'AF_DMSH_SEP_SYMBOLS'
 AF_HDMS_SEP_SYMBOLS = 'AF_HDMS_SEP_SYMBOLS'
-

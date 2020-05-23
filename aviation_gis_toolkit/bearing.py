@@ -1,5 +1,4 @@
 """
-bearing.py
 bearing module provides functionality to deal with bearings: conversion, validation
 """
 from aviation_gis_toolkit.base_tools import BasicTools

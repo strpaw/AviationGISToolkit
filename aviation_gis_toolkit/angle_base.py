@@ -1,3 +1,6 @@
+"""
+angle_base module contains common tools to handle angle.
+"""
 from aviation_gis_toolkit.base_tools import BasicTools
 from aviation_gis_toolkit.const import *
 import re

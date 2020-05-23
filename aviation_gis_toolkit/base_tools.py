@@ -1,5 +1,5 @@
 """
-base_tools.py - common features
+base_tools module contains common tools that are used across the all aviation_gis_toolkit package.
 """
 
 

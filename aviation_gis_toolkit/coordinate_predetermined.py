@@ -1,10 +1,9 @@
 """
-coordinate_predetermined.py
 coordinate_predetermined module provides functionality to validate and convert coordinate (latitude, longitude)
 from known format in advance, such as degrees, minutes, seconds, hemisphere (DMSH) into decimal degrees (DD)
 format.
 """
-from .const import *
+from aviation_gis_toolkit.const import *
 import re
 
 # --------------- Regular expressions for coordinate formats  --------------- #

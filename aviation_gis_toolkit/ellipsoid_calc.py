@@ -1,5 +1,4 @@
 """
-ellipsoid_calc.py
 ellipsoid_calc module provides functionality to various calculation on ellipsoid such as
 coordinate point based on the coordinate initial point and distance and bearing,
 distance between to points.
