@@ -2,7 +2,6 @@
 angle_base module contains common tools to handle angle.
 """
 from aviation_gis_toolkit.base_tools import BasicTools
-from aviation_gis_toolkit.const import *
 import re
 import math
 
@@ -69,6 +68,24 @@ AT_LAT_REGEXS = {
             (?P<hem_suffix>[NS]?)  # Hemisphere suffix
             $  # End of the string
            ''', re.VERBOSE)
+}
+
+AT_BRNG_REGEXS = {
+    'DMS_SEP': re.compile(r'''^
+                              (?P<deg>\d{1,3})  # Degrees
+                               \W  # Separator: space, hyphen, degree sign
+                               (?P<min>\d{1,2})  # Minutes
+                               \W  # Separator: space, hyphen, minute sign: '
+                               (?P<sec>\d{1,2}|\d{1,2}\.\d+)  # Seconds
+                               \W{,2} # Separator: space, hyphen, second sign: or '', or "
+                               $
+                             ''', re.VERBOSE),
+    'DMS_COMP': re.compile(r'''^
+                               (?P<deg>\d{3})  # Degrees
+                               (?P<min>\d{2})  # Minutes
+                               (?P<sec>\d{2}|\d{2}\.\d+)  # Seconds
+                               $
+                             ''', re.VERBOSE)
 }
 
 
@@ -156,13 +173,14 @@ class AngleBase(BasicTools):
     @staticmethod
     def _angle_to_dd(ang, ang_regexs):
         """ Converts angle from DMS, DM format into DD format.
+        Note: Correct value of hemisphere will be checked in child class Coordinate and MagneticVariation.
         :param ang: str.
         :param ang_regexs: dict, dictionary with regular expressions of angle patterns.
         :return: float
         """
         for ang_regex in ang_regexs:
-            if ang_regex.match(ang):
-                ang_parts = ang_regex.search(ang)
+            if ang_regexs[ang_regex].match(ang):
+                ang_parts = ang_regexs[ang_regex].search(ang)
                 if ang_regex in ['DMS_COMP', 'DMS_SEP']:
                     return AngleBase._dms_parts_to_dd(ang_parts)
                 elif ang_regex in ['DM_COMP', 'DM_SEP']:
