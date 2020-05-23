@@ -143,78 +143,43 @@ class AngleBase(BasicTools):
         dms = format_template.format(d=d, m=m, s=s, sec_length=sec_length, sec_prec=prec)
         return dms
 
-    @staticmethod
-    def dms_groups_to_dd(parts):
-        if parts.group('hem_prefix') and parts.group('hem_suffix'):
-            return
-        else:
-            d = int(parts.group('deg'))
-            m = int(parts.group('min'))
-            s = float(parts.group('sec'))
-            h = parts.group('hem_prefix') + parts.group('hem_suffix')
-            dd = d + m / 60 + s / 3600
-            if h in AngleBase.DIRECTION_NEGATIVE:
-                dd = -dd
-            return dd
+    # -------------- Conversion DMS, DM formats into DD format -------------- #
 
     @staticmethod
-    def dm_groups_to_dd(parts):
-        if parts.group('hem_prefix') and parts.group('hem_suffix'):
-            return
-        else:
-            d = int(parts.group('deg'))
-            m = float(parts.group('min'))
-            h = parts.group('hem_prefix') + parts.group('hem_suffix')
-            dd = d + m / 60
-            if h in AngleBase.DIRECTION_NEGATIVE:
-                dd = -dd
-            return dd
+    def _dms_parts_to_dd(parts):
+        """ Computes decimal degrees of DMS (degrees, minutes, seconds) parts.
+        :param parts: tuple (d, m, s):
+        :return: float
+        """
+        d = int(parts.group('deg'))
+        m = float(parts.group('min'))
+        s = float(parts.group('sec'))
 
-    def compacted_format_to_dd(self, ang):
-        ang_type_patterns = ANGLE_PATTERNS[self.ang_type]
-        for pattern in ang_type_patterns:
-            if ang_type_patterns[pattern].match(ang):
-                print(pattern)
-                parts = ang_type_patterns[pattern].search(ang)
-                if pattern in ['DMS_COMP', 'DMS_SEP_SPACE', 'DMS_SEP_HYPHEN', 'DMS_SEP']:
-                    return self.dms_groups_to_dd(parts)
-                elif pattern == 'DM_COMP':
-                    return self.dm_groups_to_dd(parts)
+        if m <= 60 and s <= 60:
+            return d + m / 60 + s / 3600
 
-    def angle_to_dd(self, ang):
-        ang_norm = AngleBase.get_normalized_src_value(ang)
-        dd = self.compacted_format_to_dd(ang)
-        return dd
+    @staticmethod
+    def _dm_parts_to_dd(parts):
+        """ Computes decimal degrees of DM (degrees, minutes) parts.
+        :param parts: tuple (d, m):
+        :return: float
+        """
+        d = int(parts.group('deg'))
+        m = float(parts.group('min'))
+        if m <= 60:
+            return d + m / 60
 
-
-
-
-# lons = [
-#     'W125 44 32',
-#     '125 44 32.111 E',
-#     'W 125 44 31.56',
-#     '125 44 1 E',
-#     '125 44 1',
-#     'W125 44 1 E'
-# ]
-#
-# LON_TEST = re.compile(r'''^  # Starts of the longitude
-#                         (?P<hem_prefix>[EW]?)  # Hemisphere prefix
-#                         \s?
-#                         (?P<deg>\d{1,3})  # Degrees
-#                         \W  # Degree sign
-#                         (?P<min>\d{1,2})  # Minutes
-#                         \W{1,2}  # Minute sign
-#                         #(?P<sec>\d{1,2}(\.\d+)?)  # Seconds
-#                         (?P<sec>\d{1,2}|\d{1,2}\.\d+)  # Seconds
-#                         \W{,2}?  # Second sign
-#                         \s?
-#                         (?P<hem_suffix>[EW]?)  # Hemisphere suffix
-#                         $  # End of the longitude
-#                         ''', re.VERBOSE)
-#
-#
-# for lon in lons:
-#     mo = LON_TEST.match(lon)
-#     if mo:
-#         print(lon, ' ', mo.groups())
+    @staticmethod
+    def _angle_to_dd(ang, ang_regexs):
+        """ Converts angle from DMS, DM format into DD format.
+        :param ang: str.
+        :param ang_regexs: dict, dictionary with regular expressions of angle patterns.
+        :return: float
+        """
+        for ang_regex in ang_regexs:
+            if ang_regex.match(ang):
+                ang_parts = ang_regex.search(ang)
+                if ang_regex in ['DMS_COMP', 'DMS_SEP']:
+                    return AngleBase._dms_parts_to_dd(ang_parts)
+                elif ang_regex in ['DM_COMP', 'DM_SEP']:
+                    return AngleBase._dm_parts_to_dd(ang_parts)
