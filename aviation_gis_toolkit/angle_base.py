@@ -117,6 +117,13 @@ class AngleBase(BasicTools):
         m = int(m_whole_part)
         s = round(s_part, prec)
 
+        if s == 60:
+            m += 1
+            s = 0
+        if m == 60:
+            d += 1
+            m = 0
+
         return sign(ang_dd), d, m, s
 
     @staticmethod
