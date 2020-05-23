@@ -6,53 +6,17 @@ from aviation_gis_toolkit.const import *
 import re
 import math
 
-
-ANGLE_PATTERNS = {
-    AT_LON: {
-        'DMS_COMP': re.compile(r'''
-                        ^  # Start of the string
-                        (?P<hem_prefix>[-+EW]?)  # Hemisphere prefix
-                        (?P<deg>\d{3})  # Degrees
-                        (?P<min>\d{2})  # Minutes
-                        (?P<sec>\d{2}(\.\d+)?)  # Seconds
-                        (?P<hem_suffix>[EW]?)  # Hemisphere suffix
-                        $  # End of the string
-                       ''', re.VERBOSE),
-        'DM_COMP': re.compile(r'''
-                        ^  # Start of the string
-                        (?P<hem_prefix>[-+EW]?)  # Hemisphere prefix
-                        (?P<deg>\d{3})  # Degrees
-                        (?P<min>\d{2}(\.\d+)?)  # Minutes
-                        (?P<hem_suffix>[EW]?)  # Hemisphere suffix
-                        $  # End of the string
-                       ''', re.VERBOSE),
-        'DMS_SEP_SPACE': re.compile(r'''
-                        ^  # Start of the string
-                        (?P<hem_prefix>[-+EW]?)  # Hemisphere prefix
-                        (\s)?
-                        (?P<deg>\d{3})  # Degrees
-                        (\s)
-                        (?P<min>\d{2})  # Minutes
-                        (\s)
-                        (?P<sec>\d{2}(\.\d+)?)  # Seconds
-                        (\s)?
-                        (?P<hem_suffix>[EW]?)  # Hemisphere suffix
-                        $  # End of the string
-                       ''', re.VERBOSE),
-        'DMS_SEP_HYPHEN': re.compile(r'''
+AT_LON_REGEXS = {
+    'DMS_COMP': re.compile(r'''
                 ^  # Start of the string
                 (?P<hem_prefix>[-+EW]?)  # Hemisphere prefix
-                (\s)?
                 (?P<deg>\d{3})  # Degrees
-                (-)
                 (?P<min>\d{2})  # Minutes
-                (-)
                 (?P<sec>\d{2}(\.\d+)?)  # Seconds
-                (\s)?
                 (?P<hem_suffix>[EW]?)  # Hemisphere suffix
                 $  # End of the string
                ''', re.VERBOSE),
-        'DMS_SEP': re.compile(r'''
+    'DMS_SEP': re.compile(r'''
                 ^  # Start of the string
                 (?P<hem_prefix>[-+EW]?)  # Hemisphere prefix
                 (\s)?
@@ -61,30 +25,50 @@ ANGLE_PATTERNS = {
                 (?P<min>\d{1,2})  # Minutes
                 (\W)
                 (?P<sec>\d{1,2}(\.\d+)?)  # Seconds
-                (\W)?
+                (\W){,2}
                 (?P<hem_suffix>[EW]?)  # Hemisphere suffix
                 $  # End of the string
-               ''', re.VERBOSE),
-    },
-    AT_LAT: {
-        'DMS_COMP': re.compile(r'''
-                        ^  # Start of the string
-                        (?P<hem_prefix>[-+NS]?)  # Hemisphere prefix
-                        (?P<deg>\d{2})  # Degrees
-                        (?P<min>\d{2})  # Minutes
-                        (?P<sec>\d{2}(\.\d+)?)  # Seconds
-                        (?P<hem_suffix>[NS]?)  # Hemisphere suffix
-                        $  # End of the string
-                       ''', re.VERBOSE),
-        'DM_COMP': re.compile(r'''
-                        ^  # Start of the string
-                        (?P<hem_prefix>[-+NS]?)  # Hemisphere prefix
-                        (?P<deg>\d{2})  # Degrees
-                        (?P<min>\d{2}(\.\d+)?)  # Minutes
-                        (?P<hem_suffix>[NS]?)  # Hemisphere suffix
-                        $  # End of the string
-                       ''', re.VERBOSE)
-    }
+                ''', re.VERBOSE),
+    'DM_COMP': re.compile(r'''
+                ^  # Start of the string
+                (?P<hem_prefix>[-+EW]?)  # Hemisphere prefix
+                (?P<deg>\d{3})  # Degrees
+                (?P<min>\d{2}(\.\d+)?)  # Minutes
+                (?P<hem_suffix>[EW]?)  # Hemisphere suffix
+                $  # End of the string
+               ''', re.VERBOSE)
+}
+AT_LAT_REGEXS = {
+    'DMS_COMP': re.compile(r'''
+            ^  # Start of the string
+            (?P<hem_prefix>[-+NS]?)  # Hemisphere prefix
+            (?P<deg>\d{2})  # Degrees
+            (?P<min>\d{2})  # Minutes
+            (?P<sec>\d{2}(\.\d+)?)  # Seconds
+            (?P<hem_suffix>[NS]?)  # Hemisphere suffix
+            $  # End of the string
+           ''', re.VERBOSE),
+    'DMS_SEP': re.compile(r'''
+            ^  # Start of the string
+            (?P<hem_prefix>[-+NS]?)  # Hemisphere prefix
+            (\s)?
+            (?P<deg>\d{1,2})  # Degrees
+            (\W)
+            (?P<min>\d{1,2})  # Minutes
+            (\W)
+            (?P<sec>\d{1,2}(\.\d+)?)  # Seconds
+            (\W){,2}
+            (?P<hem_suffix>[NS]?)  # Hemisphere suffix
+            $  # End of the string
+            ''', re.VERBOSE),
+    'DM_COMP': re.compile(r'''
+            ^  # Start of the string
+            (?P<hem_prefix>[-+NS]?)  # Hemisphere prefix
+            (?P<deg>\d{2})  # Degrees
+            (?P<min>\d{2}(\.\d+)?)  # Minutes
+            (?P<hem_suffix>[NS]?)  # Hemisphere suffix
+            $  # End of the string
+           ''', re.VERBOSE)
 }
 
 
