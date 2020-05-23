@@ -182,32 +182,32 @@ class AngleBase(BasicTools):
 
 
 
-lons = [
-    'W125 44 32',
-    '125 44 32.111 E',
-    'W 125 44 31.56',
-    '125 44 1 E',
-    '125 44 1',
-    'W125 44 1 E'
-]
-
-LON_TEST = re.compile(r'''^  # Starts of the longitude
-                        (?P<hem_prefix>[EW]?)  # Hemisphere prefix
-                        \s?
-                        (?P<deg>\d{1,3})  # Degrees
-                        \W  # Degree sign
-                        (?P<min>\d{1,2})  # Minutes
-                        \W{1,2}  # Minute sign        
-                        #(?P<sec>\d{1,2}(\.\d+)?)  # Seconds   
-                        (?P<sec>\d{1,2}|\d{1,2}\.\d+)  # Seconds   
-                        \W{,2}?  # Second sign    
-                        \s?  
-                        (?P<hem_suffix>[EW]?)  # Hemisphere suffix
-                        $  # End of the longitude
-                        ''', re.VERBOSE)
-
-
-for lon in lons:
-    mo = LON_TEST.match(lon)
-    if mo:
-        print(lon, ' ', mo.groups())
+# lons = [
+#     'W125 44 32',
+#     '125 44 32.111 E',
+#     'W 125 44 31.56',
+#     '125 44 1 E',
+#     '125 44 1',
+#     'W125 44 1 E'
+# ]
+#
+# LON_TEST = re.compile(r'''^  # Starts of the longitude
+#                         (?P<hem_prefix>[EW]?)  # Hemisphere prefix
+#                         \s?
+#                         (?P<deg>\d{1,3})  # Degrees
+#                         \W  # Degree sign
+#                         (?P<min>\d{1,2})  # Minutes
+#                         \W{1,2}  # Minute sign
+#                         #(?P<sec>\d{1,2}(\.\d+)?)  # Seconds
+#                         (?P<sec>\d{1,2}|\d{1,2}\.\d+)  # Seconds
+#                         \W{,2}?  # Second sign
+#                         \s?
+#                         (?P<hem_suffix>[EW]?)  # Hemisphere suffix
+#                         $  # End of the longitude
+#                         ''', re.VERBOSE)
+#
+#
+# for lon in lons:
+#     mo = LON_TEST.match(lon)
+#     if mo:
+#         print(lon, ' ', mo.groups())
