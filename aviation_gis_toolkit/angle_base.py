@@ -4,6 +4,7 @@ angle_base module contains common tools to handle angle.
 from aviation_gis_toolkit.base_tools import BasicTools
 from aviation_gis_toolkit.const import *
 import re
+import math
 
 
 ANGLE_PATTERNS = {
@@ -87,9 +88,6 @@ ANGLE_PATTERNS = {
 }
 
 
-
-
-
 class AngleBase(BasicTools):
 
     DIRECTION_NEGATIVE = ['-', 'S', 'W']
@@ -99,6 +97,44 @@ class AngleBase(BasicTools):
         self.ang_src = ang_src
         self.ang_type = ang_type
         self.ang_dd = None
+
+    # -------------- Conversion DD to DMS format -------------- #
+
+    @staticmethod
+    def _dd_to_dms_parts(ang_dd, prec=3):
+        """ Converts angle given in DD format into DMS 'parts': degrees, minutes, seconds.
+        :param ang_dd: float, angle in DD format.
+        :param prec: int, positive number of decimal point of seconds, default value is 3.
+        :return tuple: tuple of d, m, s (int, int, float).
+        """
+
+        d_frac_part, d_whole_part = math.modf(math.fabs(ang_dd))  # frac_part - fractional part
+        m_frac_part, m_whole_part = math.modf(d_frac_part * 60)
+        s_part = m_frac_part * 60
+
+        def sign(a_dd): return 1 if a_dd >= 0 else -1
+        d = int(d_whole_part)
+        m = int(m_whole_part)
+        s = round(s_part, prec)
+
+        return sign(ang_dd), d, m, s
+
+    @staticmethod
+    def _dd_to_dms(format_template, ang, prec=3):
+        """ Converts angle from decimal degrees format into degrees, minutes, seconds space separated format.
+        :param format_template: str, DMS format template
+        :param ang: float, bearing in DD format.
+        :param prec: int, positive number of decimal point of seconds
+        :return: str: bearing in DMS format.
+        """
+        sign, d, m, s = AngleBase._dd_to_dms_parts(ang, prec)
+
+        sec_length = 2
+        if prec > 0:
+            sec_length = prec + 3
+
+        dms = format_template.format(d=d, m=m, s=s, sec_length=sec_length, sec_prec=prec)
+        return dms
 
     @staticmethod
     def dms_groups_to_dd(parts):
