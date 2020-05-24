@@ -2,7 +2,6 @@
 bearing module provides functionality to deal with bearings: conversion, validation
 """
 from aviation_gis_toolkit.angle_base import *
-import math
 
 # Formatting bearing in degrees, minutes, seconds separated format
 BRNG_STRING_FORMAT = '{d:03d} {m:02d} {s:0{sec_length}.{sec_prec}f}'
@@ -29,6 +28,7 @@ class Bearing(AngleBase):
         self.brng_dd = None
         self.is_valid = None
         self.err_msg = ''
+        self.bearing_to_dd()
 
     def get_bearing_dms(self, prec=3):
         """ Converts bearing from decimal degrees format to degrees, minutes, seconds space separated format.
@@ -40,14 +40,24 @@ class Bearing(AngleBase):
     def bearing_to_dd(self):
         """ Converts bearing from source value to DD format. """
         norm_brng = self.get_normalized_src_value(self.src_brng)
-        # Check DMS formats
-        dd = self._bearing_dms_to_dd(norm_brng)
-        # Check if brng is withing range
-        if dd is not None:
-            if self.is_within_range(dd, 0, 360):
-                self.brng_dd = dd
-                self.is_valid = True
-                self.err_msg = ''
-            else:
-                self.is_valid = False
-                self.err_msg = 'Value {} is not supported bearing format'.format(self.src_brng)
+
+        if norm_brng:
+            # Check if source bearing is in DD format:
+            try:
+                dd = float(norm_brng)
+            except ValueError:
+                # Check if source bearing is in DMS or DM formats
+                dd = self._angle_to_dd(norm_brng, AT_BRNG_REGEXS)
+
+            # If converted into DD - check if angle is within range for bearing
+            if dd is not None:
+                if self.is_within_range(dd, 0, 360):
+                    self.brng_dd = dd
+                    self.is_valid = True
+                    self.err_msg = ''
+                else:
+                    self.is_valid = False
+                    self.err_msg = 'Value {} is not supported bearing format'.format(self.src_brng)
+        else:
+            self.is_valid = False
+            self.err_msg = 'Enter bearing.'
