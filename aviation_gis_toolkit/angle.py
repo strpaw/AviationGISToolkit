@@ -3,29 +3,6 @@ from .const import *
 from .base_tools import BasicTools
 
 
-# ANGLE DMS string formats
-ANG_STRING_FORMATS = {AT_LAT: {AF_HDMS_ALL_SEP: '{hem} {d:02d} {m:02d} {s:0{sec_length}.{sec_prec}f}',
-                               AF_HDMS_SEP: '{hem}{d:02d} {m:02d} {s:0{sec_length}.{sec_prec}f}',
-                               AF_DMSH_ALL_SEP: '{d:02d} {m:02d} {s:0{sec_length}.{sec_prec}f} {hem}',
-                               AF_DMSH_SEP: '{d:02d} {m:02d} {s:0{sec_length}.{sec_prec}f}{hem}',
-                               AF_HDMS_COMP: '{hem}{d:02d}{m:02d}{s:0{sec_length}.{sec_prec}f}',
-                               AF_DMSH_COMP: '{d:02d}{m:02d}{s:0{sec_length}.{sec_prec}f}{hem}',
-                               AF_DMSH_SEP_SYMBOLS: '{d:02d}\xb0{m:02d}\''
-                                                    '{s:0{sec_length}.{sec_prec}f}\'\' {hem}',
-                               AF_HDMS_SEP_SYMBOLS: '{hem} {d:02d}\xb0{m:02d}\''
-                                                    '{s:0{sec_length}.{sec_prec}f}\'\''},
-                      AT_LON: {AF_HDMS_ALL_SEP: '{hem} {d:03d} {m:02d} {s:0{sec_length}.{sec_prec}f}',
-                               AF_HDMS_SEP: '{hem}{d:03d} {m:02d} {s:0{sec_length}.{sec_prec}f}',
-                               AF_DMSH_ALL_SEP: '{d:03d} {m:02d} {s:0{sec_length}.{sec_prec}f} {hem}',
-                               AF_DMSH_SEP: '{d:03d} {m:02d} {s:0{sec_length}.{sec_prec}f}{hem}',
-                               AF_HDMS_COMP: '{hem}{d:03d}{m:02d}{s:0{sec_length}.{sec_prec}f}',
-                               AF_DMSH_COMP: '{d:02d}{m:02d}{s:0{sec_length}.{sec_prec}f}{hem}',
-                               AF_DMSH_SEP_SYMBOLS: '{d:03d}\xb0{m:02d}\''
-                                                    '{s:0{sec_length}.{sec_prec}f}\'\' {hem}',
-                               AF_HDMS_SEP_SYMBOLS: '{hem} {d:03d}\xb0{m:02d}\''
-                                                    '{s:0{sec_length}.{sec_prec}f}\'\''}}
-
-
 class Angle(BasicTools):
     """ Class used to conversion angle between various formats.
     Also to check if given value is correct angle """
