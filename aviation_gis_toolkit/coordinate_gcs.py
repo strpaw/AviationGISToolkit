@@ -43,6 +43,18 @@ class CoordinateGCS(AngleBase):
         self.err_msg = ''
 
     @staticmethod
+    def is_coordinate_within_range(ang_dd, ang_type):
+        """  Checks if angle is within range for specified angle type.
+        :param ang_dd: float, angle to check
+        :param ang_type: const(str): type of angle
+        :return:
+        """
+        if ang_type == AT_LAT:
+            return bool(-90 <= ang_dd <= 90)
+        elif ang_type == AT_LON:
+            return bool(-180 <= ang_dd <= 180)
+
+    @staticmethod
     def get_hemisphere_character(sign, ang_type):
         """ Returns hemisphere character e.g. S, N
         :param sign: str, character '-', '+'
@@ -70,3 +82,32 @@ class CoordinateGCS(AngleBase):
         def sign(a_dd): return 1 if a_dd >= 0 else -1
         hem = CoordinateGCS.get_hemisphere_character(sign(self.ang_dd), self.ang_type)
         return self._dd_to_dms(COORD_GCS_STRING_FORMATS[self.ang_type][ang_str_format], self.ang_dd, prec, hem)
+
+    def angle_to_dd(self):
+        """ Converts coordinate (longitude or latitude) to DD format. """
+
+        if self.ang_src == AT_LON:
+            ang_name = 'longitude'
+        elif self.ang_type == AT_LAT:
+            ang_name = 'latitude'
+
+        ang_norm = self.get_normalized_src_value(self.ang_src)
+        if ang_norm:
+            # Check if source coordinate is in DD format:
+            try:
+                dd = float(ang_norm)
+            except ValueError:
+                pass
+
+            # If converted into DD - check if angle is within range for given coordinate type
+            if dd is not None:
+                if CoordinateGCS.is_coordinate_within_range(dd, self.ang_type):
+                    self.ang_dd = dd
+                    self.is_valid = True
+                    self.err_msg = ''
+                else:
+                    self.is_valid = False
+                    self.err_msg = 'Value {} is not valid or not supported {} format.'.format(self.ang_src, self.ang_type)
+        else:
+            self.is_valid = False
+            self.err_msg = 'Enter {}'.format(ang_name)

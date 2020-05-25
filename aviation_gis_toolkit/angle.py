@@ -19,20 +19,6 @@ class Angle(BasicTools):
         self.ang_type = ang_type
         self.ang_dd = None
 
-    # General methods common to all types of angle
-
-    @staticmethod
-    def is_angle_within_range(ang_dd, ang_type):
-        """  Checks if angle is within range for specified angle type.
-        :param ang_dd: float, angle to check
-        :param ang_type: const(str): type of angle
-        :return:
-        """
-        if ang_type == AT_LAT:
-            return bool(-90 <= ang_dd <= 90)
-        elif ang_type == AT_LON:
-            return bool(-180 <= ang_dd <= 180)
-
     # Conversion from DMS to DD format
 
     @staticmethod
