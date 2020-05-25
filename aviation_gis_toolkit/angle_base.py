@@ -128,11 +128,12 @@ class AngleBase(BasicTools):
         return sign(ang_dd), d, m, s
 
     @staticmethod
-    def _dd_to_dms(format_template, ang, prec=3):
+    def _dd_to_dms(format_template, ang, prec=3, hem=None):
         """ Converts angle from decimal degrees format into degrees, minutes, seconds space separated format.
         :param format_template: str, DMS format template
         :param ang: float, bearing in DD format.
         :param prec: int, positive number of decimal point of seconds
+        :param hem: str, hemisphere character
         :return: str: bearing in DMS format.
         """
         sign, d, m, s = AngleBase._dd_to_dms_parts(ang, prec)
@@ -140,8 +141,10 @@ class AngleBase(BasicTools):
         sec_length = 2
         if prec > 0:
             sec_length = prec + 3
-
-        dms = format_template.format(d=d, m=m, s=s, sec_length=sec_length, sec_prec=prec)
+        if hem:
+            dms = format_template.format(d=d, m=m, s=s, sec_length=sec_length, sec_prec=prec, hem=hem)
+        else:
+            dms = format_template.format(d=d, m=m, s=s, sec_length=sec_length, sec_prec=prec)
         return dms
 
     # -------------- Conversion DMS, DM formats into DD format -------------- #
